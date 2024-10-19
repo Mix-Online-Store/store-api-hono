@@ -5,7 +5,7 @@ import type { AppRouteHandler } from "@/lib/types";
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { notFoundMessage } from "@/lib/constants";
+import { notFoundResponseMessage } from "@/lib/constants";
 
 import type {
   AdminUpdateRoute,
@@ -59,7 +59,7 @@ export const getById: AppRouteHandler<GetByIdRoute> = async (c) => {
   });
 
   if (!user) {
-    return c.json(notFoundMessage, HttpStatusCodes.NOT_FOUND);
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -90,7 +90,7 @@ export const me: AppRouteHandler<MeRoute> = async (c) => {
   });
 
   if (!user) {
-    return c.json(notFoundMessage, HttpStatusCodes.NOT_FOUND);
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -114,7 +114,7 @@ export const update: AppRouteHandler<UpdateRoute> = async (c) => {
     .returning();
 
   if (!user) {
-    return c.json(notFoundMessage, HttpStatusCodes.NOT_FOUND);
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -138,7 +138,7 @@ export const adminUpdate: AppRouteHandler<AdminUpdateRoute> = async (c) => {
     .returning();
 
   if (!user) {
-    return c.json(notFoundMessage, HttpStatusCodes.NOT_FOUND);
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -157,7 +157,7 @@ export const remove: AppRouteHandler<RemoveUserRoute> = async (c) => {
   const result = await db.delete(users).where(eq(users.id, id));
 
   if (result.rowCount === 0) {
-    return c.json(notFoundMessage, HttpStatusCodes.NOT_FOUND);
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(

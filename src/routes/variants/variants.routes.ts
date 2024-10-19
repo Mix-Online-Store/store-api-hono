@@ -5,7 +5,10 @@ import jsonContentOneOf from "stoker/openapi/helpers/json-content-one-of";
 import jsonContentRequired from "stoker/openapi/helpers/json-content-required";
 import { createErrorSchema, IdUUIDParamsSchema } from "stoker/openapi/schemas";
 
-import { notFoundResponseSchema, unauthorizedSchema } from "@/lib/constants";
+import {
+  notFoundResponseSchema,
+  unauthorizedResponseSchema,
+} from "@/lib/constants";
 import createResponseSchema from "@/lib/schemas/create-response-schema";
 import {
   insertVariantSchema,
@@ -46,7 +49,7 @@ export const create = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -101,7 +104,7 @@ export const update = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -117,7 +120,7 @@ export const remove = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createResponseSchema(z.object({})),
+      createResponseSchema(),
       "Variant deleted."
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -129,7 +132,7 @@ export const remove = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },

@@ -5,7 +5,10 @@ import type { AppRouteHandler } from "@/lib/types";
 
 import { db } from "@/db";
 import { images } from "@/db/schema";
-import { notFoundMessage } from "@/lib/constants";
+import {
+  notFoundResponseMessage,
+  successResponseMessage,
+} from "@/lib/constants";
 
 import type {
   ImageByIdRoute,
@@ -50,13 +53,7 @@ export const getById: AppRouteHandler<ImageByIdRoute> = async (c) => {
   });
 
   if (!image) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -80,13 +77,7 @@ export const update: AppRouteHandler<ImageUpdateRoute> = async (c) => {
     .returning();
 
   if (!image) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -105,20 +96,11 @@ export const remove: AppRouteHandler<ImageRemoveRoute> = async (c) => {
   const result = await db.delete(images).where(eq(images.id, id));
 
   if (result.rowCount === 0) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
-    {
-      success: true,
-      message: "Delete image success.",
-    },
+    successResponseMessage("Delete image success."),
     HttpStatusCodes.OK
   );
 };

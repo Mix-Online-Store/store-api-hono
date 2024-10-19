@@ -7,7 +7,7 @@ import type { AppRouteHandler } from "@/lib/types";
 import { db } from "@/db";
 import { notifications } from "@/db/schema";
 import env from "@/env";
-import { notFoundMessage } from "@/lib/constants";
+import { notFoundResponseMessage } from "@/lib/constants";
 import { client } from "@/lib/onesignal";
 
 import type {
@@ -126,13 +126,7 @@ export const deleteNotification: AppRouteHandler<
   const result = await db.delete(notifications).where(eq(notifications.id, id));
 
   if (result.rowCount === 0) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(

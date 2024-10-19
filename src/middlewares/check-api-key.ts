@@ -6,28 +6,31 @@ import type { AppBindings } from "@/lib/types";
 
 import { db } from "@/db";
 import { apikeys } from "@/db/schema";
-import { unauthorizedMessage } from "@/lib/constants";
+import { unauthorizedResponseMessage } from "@/lib/constants";
 
 export const checkApiKey = createMiddleware<AppBindings>(async (c, next) => {
-  const { apiKey } = c.req.query();
-  c.var.logger.debug({ apiKey });
+  const apiKeyHeader = c.req.header("x-api-key");
+  c.var.logger.debug({ apiKeyHeader });
 
-  const result = await db.query.apikeys.findFirst({
-    where: eq(apikeys.accessKey, apiKey),
-  });
-  c.var.logger.debug({ result });
-  if (!result) {
-    return c.json(unauthorizedMessage, HttpStatusCodes.UNAUTHORIZED);
+  if (apiKeyHeader) {
+    const result = await db.query.apikeys.findFirst({
+      where: eq(apikeys.accessKey, apiKeyHeader),
+    });
+    if (!result) {
+      return c.json(unauthorizedResponseMessage, HttpStatusCodes.UNAUTHORIZED);
+    }
+
+    await next();
+  } else {
+    const { apiKey } = c.req.query();
+    c.var.logger.debug({ apiKey });
+
+    const result = await db.query.apikeys.findFirst({
+      where: eq(apikeys.accessKey, apiKey),
+    });
+    if (!result) {
+      return c.json(unauthorizedResponseMessage, HttpStatusCodes.UNAUTHORIZED);
+    }
+    await next();
   }
-
-  // currenty, no need to check expired
-  //   const currentDate = new Date();
-  //   if (result.expired < currentDate) {
-  //     return c.json(
-  //       { message: "Your api key has been expired." },
-  //       HttpStatusCodes.BAD_REQUEST
-  //     );
-  //   }
-
-  await next();
 });

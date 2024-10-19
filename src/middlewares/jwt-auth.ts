@@ -5,7 +5,7 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import type { AppBindings } from "@/lib/types";
 
 import env from "@/env";
-import { unauthorizedMessage } from "@/lib/constants";
+import { unauthorizedResponseMessage } from "@/lib/constants";
 
 export const jwtAuth = createMiddleware<AppBindings>(async (c, next) => {
   const jwtMiddleware = jwt({
@@ -19,7 +19,7 @@ export const isAdmin = createMiddleware<AppBindings>(async (c, next) => {
   c.var.logger.debug({ role });
 
   if (role !== "admin") {
-    return c.json(unauthorizedMessage, HttpStatusCodes.UNAUTHORIZED);
+    return c.json(unauthorizedResponseMessage, HttpStatusCodes.UNAUTHORIZED);
   }
 
   return next();

@@ -11,7 +11,7 @@ import type { AppRouteHandler } from "@/lib/types";
 import { db } from "@/db";
 import { apikeys, tokens, users } from "@/db/schema";
 import env from "@/env";
-import { notFoundMessage, unauthorizedMessage } from "@/lib/constants";
+import { notFoundResponseMessage } from "@/lib/constants";
 import { createHash } from "@/lib/create-hash";
 import { attachCookiesToResponse } from "@/lib/jwt";
 import { sendPasswordResetMail } from "@/lib/mail/send-password-mail";
@@ -61,6 +61,7 @@ export const register: AppRouteHandler<RegisterRoute> = async (c) => {
 
   return c.json(
     {
+      success: true,
       message: "Success! Please check your email to verify account.",
     },
     HttpStatusCodes.CREATED
@@ -76,11 +77,11 @@ export const verifyEmail: AppRouteHandler<VerifyEmailRoute> = async (c) => {
     },
   });
   if (!user) {
-    return c.json(notFoundMessage, HttpStatusCodes.NOT_FOUND);
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   if (user.verificationToken !== token) {
-    return c.json(unauthorizedMessage, HttpStatusCodes.UNAUTHORIZED);
+    return c.json(notFoundResponseMessage, HttpStatusCodes.UNAUTHORIZED);
   }
 
   user.isVerified = true;
@@ -96,6 +97,7 @@ export const verifyEmail: AppRouteHandler<VerifyEmailRoute> = async (c) => {
 
   return c.json(
     {
+      success: true,
       message: "Email verified.",
     },
     HttpStatusCodes.OK
@@ -114,7 +116,7 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
 
   if (!user) {
     return c.json(
-      { message: "Invalid credentials" },
+      { success: false, message: "Invalid credentials" },
       HttpStatusCodes.UNAUTHORIZED
     );
   }
@@ -122,14 +124,14 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
   const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) {
     return c.json(
-      { message: "Invalid credentials." },
+      { success: false, message: "Invalid credentials." },
       HttpStatusCodes.UNAUTHORIZED
     );
   }
 
   if (!user.isVerified) {
     return c.json(
-      { message: "Please verify your email" },
+      { success: false, message: "Please verify your email" },
       HttpStatusCodes.UNAUTHORIZED
     );
   }
@@ -153,7 +155,7 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
     const { isValid } = existingToken;
     if (!isValid) {
       return c.json(
-        { message: "Invalid credentials." },
+        { success: false, message: "Invalid credentials." },
         HttpStatusCodes.UNAUTHORIZED
       );
     }
@@ -168,9 +170,13 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
 
     return c.json(
       {
-        ...tokenUser,
-        accessToken: accessTokenJWT,
-        refreshToken: refreshTokenJWT,
+        success: true,
+        message: "",
+        data: {
+          ...tokenUser,
+          accessToken: accessTokenJWT,
+          refreshToken: refreshTokenJWT,
+        },
       },
       HttpStatusCodes.OK
     );
@@ -199,9 +205,13 @@ export const login: AppRouteHandler<LoginRoute> = async (c) => {
 
   return c.json(
     {
-      ...tokenUser,
-      accessToken: accessTokenJWT,
-      refreshToken: refreshTokenJWT,
+      success: true,
+      message: "",
+      data: {
+        ...tokenUser,
+        accessToken: accessTokenJWT,
+        refreshToken: refreshTokenJWT,
+      },
     },
     HttpStatusCodes.OK
   );
@@ -213,7 +223,7 @@ export const logout: AppRouteHandler<LogoutRoute> = async (c) => {
   const result = await db.delete(tokens).where(eq(tokens.userId, userId));
 
   if (result.rowCount === 0) {
-    return c.json(notFoundMessage, HttpStatusCodes.UNAUTHORIZED);
+    return c.json(notFoundResponseMessage, HttpStatusCodes.UNAUTHORIZED);
   }
 
   deleteCookie(c, "accessToken", {
@@ -227,6 +237,7 @@ export const logout: AppRouteHandler<LogoutRoute> = async (c) => {
 
   return c.json(
     {
+      success: true,
       message: "User logged out",
     },
     HttpStatusCodes.OK
@@ -244,7 +255,7 @@ export const forgotPassword: AppRouteHandler<ForgotPasswordRoute> = async (
     },
   });
   if (!user) {
-    return c.json(notFoundMessage, HttpStatusCodes.NOT_FOUND);
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   const passwordToken = crypto.randomBytes(70).toString("hex");
@@ -267,6 +278,7 @@ export const forgotPassword: AppRouteHandler<ForgotPasswordRoute> = async (
 
   return c.json(
     {
+      success: true,
       message: "Please check your mail box for restting password link.",
     },
     HttpStatusCodes.OK
@@ -282,7 +294,7 @@ export const resetPassword: AppRouteHandler<ResetPasswordRoute> = async (c) => {
     },
   });
   if (!user) {
-    return c.json(notFoundMessage, HttpStatusCodes.NOT_FOUND);
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   const currentDate = new Date();
@@ -301,6 +313,7 @@ export const resetPassword: AppRouteHandler<ResetPasswordRoute> = async (c) => {
 
     return c.json(
       {
+        success: true,
         message: "Password reset successful.",
       },
       HttpStatusCodes.OK
@@ -308,6 +321,7 @@ export const resetPassword: AppRouteHandler<ResetPasswordRoute> = async (c) => {
   } else {
     return c.json(
       {
+        success: false,
         message: "May be your password reset token expired or invalid",
       },
       HttpStatusCodes.BAD_REQUEST

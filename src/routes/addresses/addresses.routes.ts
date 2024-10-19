@@ -5,7 +5,10 @@ import jsonContentOneOf from "stoker/openapi/helpers/json-content-one-of";
 import jsonContentRequired from "stoker/openapi/helpers/json-content-required";
 import { createErrorSchema, IdUUIDParamsSchema } from "stoker/openapi/schemas";
 
-import { notFoundResponseSchema, unauthorizedSchema } from "@/lib/constants";
+import {
+  notFoundResponseSchema,
+  unauthorizedResponseSchema,
+} from "@/lib/constants";
 import {
   insertAddressSchema,
   selectAddressSchema,
@@ -29,11 +32,11 @@ export const list = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createPaginatedResponseSchema(z.array(selectAddressSchema)),
+      createPaginatedResponseSchema(selectAddressSchema),
       "The list of addresses."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -61,7 +64,7 @@ export const create = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -85,7 +88,7 @@ export const getById = createRoute({
       "Address not found."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -114,7 +117,7 @@ export const update = createRoute({
       "Address not found."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContentOneOf(
@@ -137,7 +140,7 @@ export const remove = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createResponseSchema(z.object({})),
+      createResponseSchema(),
       "Address deleted."
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -145,7 +148,7 @@ export const remove = createRoute({
       "Address not found."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -169,7 +172,7 @@ export const getByUserId = createRoute({
       "The list of addresses."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },

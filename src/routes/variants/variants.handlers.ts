@@ -5,7 +5,7 @@ import type { AppRouteHandler } from "@/lib/types";
 
 import { db } from "@/db";
 import { variants } from "@/db/schema";
-import { notFoundMessage } from "@/lib/constants";
+import { notFoundResponseMessage } from "@/lib/constants";
 
 import type {
   VariantByIdRoute,
@@ -52,13 +52,7 @@ export const getById: AppRouteHandler<VariantByIdRoute> = async (c) => {
   });
 
   if (!variant) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -82,13 +76,7 @@ export const update: AppRouteHandler<VariantUpdateRoute> = async (c) => {
     .returning();
 
   if (!variant) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -107,13 +95,7 @@ export const remove: AppRouteHandler<VariantRemoveRoute> = async (c) => {
   const result = await db.delete(variants).where(eq(variants.id, id));
 
   if (result.rowCount === 0) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(

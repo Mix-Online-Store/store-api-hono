@@ -5,7 +5,7 @@ import type { AppRouteHandler } from "@/lib/types";
 
 import { db } from "@/db";
 import { posters } from "@/db/schema";
-import { notFoundMessage } from "@/lib/constants";
+import { notFoundResponseMessage } from "@/lib/constants";
 
 import type {
   PosterByIdRoute,
@@ -49,13 +49,7 @@ export const getById: AppRouteHandler<PosterByIdRoute> = async (c) => {
   });
 
   if (!poster) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -79,13 +73,7 @@ export const update: AppRouteHandler<PosterUpdateRoute> = async (c) => {
     .returning();
 
   if (!poster) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -104,13 +92,7 @@ export const remove: AppRouteHandler<PosterRemoveRoute> = async (c) => {
   const result = await db.delete(posters).where(eq(posters.id, id));
 
   if (result.rowCount === 0) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(

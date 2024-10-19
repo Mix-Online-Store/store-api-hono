@@ -1,32 +1,54 @@
-import { z } from "@hono/zod-openapi";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
-import { createMessageObjectSchema } from "stoker/openapi/schemas";
 
 import createResponseSchema from "./schemas/create-response-schema";
 
-export const notFoundSchema = createMessageObjectSchema(
-  HttpStatusPhrases.NOT_FOUND
-);
-export const notFoundMessage = { message: HttpStatusPhrases.NOT_FOUND };
+// export const notFoundSchema = createMessageObjectSchema(
+//   HttpStatusPhrases.NOT_FOUND
+// );
+// export const notFoundMessage = { message: HttpStatusPhrases.NOT_FOUND };
 
-export const unauthorizedSchema = createMessageObjectSchema(
-  HttpStatusPhrases.UNAUTHORIZED
-);
-export const unauthorizedMessage = { message: HttpStatusPhrases.UNAUTHORIZED };
+// export const unauthorizedSchema = createMessageObjectSchema(
+//   HttpStatusPhrases.UNAUTHORIZED
+// );
+// export const unauthorizedMessage = { message: HttpStatusPhrases.UNAUTHORIZED };
+
+// ======= Response ==============
+export function successResponseMessage(message: string): {
+  success: boolean;
+  message: string;
+} {
+  return {
+    success: true,
+    message,
+  };
+}
 
 export const notFoundResponseSchema = createResponseSchema(
-  z.object({}),
+  null,
   HttpStatusPhrases.NOT_FOUND
 );
+export const notFoundResponseMessage = {
+  success: false,
+  message: HttpStatusPhrases.NOT_FOUND,
+};
+
 export const unauthorizedResponseSchema = createResponseSchema(
   null,
   HttpStatusPhrases.UNAUTHORIZED
 );
+export const unauthorizedResponseMessage = {
+  success: false,
+  message: HttpStatusPhrases.UNAUTHORIZED,
+};
 
 export const badRequestResponseSchema = createResponseSchema(
-  z.object({}),
+  null,
   HttpStatusPhrases.BAD_REQUEST
 );
+export const badRequestResponseMessage = {
+  success: false,
+  message: HttpStatusPhrases.BAD_REQUEST,
+};
 
 export const ZOD_ERROR_MESSAGES = {
   REQUIRED: "Required",

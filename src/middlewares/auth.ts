@@ -10,7 +10,7 @@ import type { AppBindings } from "@/lib/types";
 import { db } from "@/db";
 import { tokens } from "@/db/schema";
 import env from "@/env";
-import { unauthorizedMessage } from "@/lib/constants";
+import { unauthorizedResponseMessage } from "@/lib/constants";
 import { attachCookiesToResponse, isValid } from "@/lib/jwt";
 
 export async function isAuth(c: Context<AppBindings>, next: Next) {
@@ -29,7 +29,7 @@ export async function isAuth(c: Context<AppBindings>, next: Next) {
   }
 
   if (!signedCookie.refreshToken) {
-    return c.json(unauthorizedMessage, HttpStatusCodes.UNAUTHORIZED);
+    return c.json(unauthorizedResponseMessage, HttpStatusCodes.UNAUTHORIZED);
   }
 
   const payload = await isValid(signedCookie.refreshToken as string);
@@ -48,7 +48,7 @@ export async function isAuth(c: Context<AppBindings>, next: Next) {
   });
 
   if (!existingToken || !existingToken?.isValid) {
-    return c.json(unauthorizedMessage, HttpStatusCodes.UNAUTHORIZED);
+    return c.json(unauthorizedResponseMessage, HttpStatusCodes.UNAUTHORIZED);
   }
 
   attachCookiesToResponse(c, user, refreshToken);

@@ -5,7 +5,10 @@ import type { AppRouteHandler } from "@/lib/types";
 
 import { db } from "@/db";
 import { couponCodes, products } from "@/db/schema";
-import { notFoundMessage } from "@/lib/constants";
+import {
+  notFoundResponseMessage,
+  successResponseMessage,
+} from "@/lib/constants";
 
 import type {
   CouponCodeByCategoryIdRoute,
@@ -48,7 +51,8 @@ export const list: AppRouteHandler<CouponCodeListRoute> = async (c) => {
       message: "Coupon codes retrieved successful.",
       data: result,
       page,
-      pages: Math.ceil(totalCount.count / pageSize),
+      limit: pageSize,
+      totalPage: Math.ceil(totalCount.count / pageSize),
     },
     HttpStatusCodes.OK
   );
@@ -83,13 +87,7 @@ export const getById: AppRouteHandler<CouponCodeByIdRoute> = async (c) => {
   });
 
   if (!cuponCode) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -119,13 +117,7 @@ export const update: AppRouteHandler<CouponCodeUpdateRoute> = async (c) => {
     .returning();
 
   if (!cuponCode) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -144,20 +136,11 @@ export const remove: AppRouteHandler<CouponCodeRemoveRoute> = async (c) => {
   const result = await db.delete(couponCodes).where(eq(couponCodes.id, id));
 
   if (result.rowCount === 0) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
-    {
-      success: true,
-      message: "Delete cupon code success.",
-    },
+    successResponseMessage("Delete cupon code success."),
     HttpStatusCodes.OK
   );
 };
@@ -176,6 +159,7 @@ export const getByProductId: AppRouteHandler<
     data: result,
   });
 };
+
 export const getByCategoryId: AppRouteHandler<
   CouponCodeByCategoryIdRoute
 > = async (c) => {
@@ -303,16 +287,9 @@ export const checkCoupon: AppRouteHandler<CouponCodeCheckRoute> = async (c) => {
       return false;
     }
 
-    // if (
-    //   coupon.applicableProductId &&
-    //   coupon.applicableProductId !== product.id
-    // ) {
-    //   c.var.logger.debug("In productId check");
-    //   return false;
-    // }
     if (
       coupon.applicableProductId &&
-      !product.variantId?.includes(coupon.applicableProductId)
+      coupon.applicableProductId !== product.id
     ) {
       c.var.logger.debug("In productId check");
       return false;

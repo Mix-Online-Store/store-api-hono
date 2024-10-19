@@ -1,11 +1,14 @@
-import { createRoute, z } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import jsonContent from "stoker/openapi/helpers/json-content";
 import jsonContentOneOf from "stoker/openapi/helpers/json-content-one-of";
 import jsonContentRequired from "stoker/openapi/helpers/json-content-required";
 import { createErrorSchema, IdUUIDParamsSchema } from "stoker/openapi/schemas";
 
-import { notFoundSchema, unauthorizedSchema } from "@/lib/constants";
+import {
+  notFoundResponseSchema,
+  unauthorizedResponseSchema,
+} from "@/lib/constants";
 import createResponseSchema, {
   createPaginatedResponseSchema,
 } from "@/lib/schemas/create-response-schema";
@@ -31,11 +34,11 @@ export const list = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createPaginatedResponseSchema(z.array(selectUsersSchema)),
+      createPaginatedResponseSchema(selectUsersSchema),
       "The list users."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized."
     ),
   },
@@ -54,9 +57,12 @@ export const getById = createRoute({
       createResponseSchema(selectUsersSchema),
       "The requestest user."
     ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "User not found."),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundResponseSchema,
+      "User not found."
+    ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized."
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -76,9 +82,12 @@ export const me = createRoute({
       createResponseSchema(selectProfileSchema),
       "The requestest user."
     ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "User not found."),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundResponseSchema,
+      "User not found."
+    ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -98,7 +107,10 @@ export const update = createRoute({
       createResponseSchema(selectProfileSchema),
       "The requestest user."
     ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "User not found."),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundResponseSchema,
+      "User not found."
+    ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContentOneOf(
       [
         createErrorSchema(IdUUIDParamsSchema),
@@ -107,7 +119,7 @@ export const update = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -127,9 +139,12 @@ export const adminUpdate = createRoute({
       createResponseSchema(selectProfileSchema),
       "The requestest user."
     ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "User not found."),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundResponseSchema,
+      "User not found."
+    ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized."
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContentOneOf(
@@ -154,13 +169,16 @@ export const remove = createRoute({
     [HttpStatusCodes.OK]: {
       description: "User deleted.",
     },
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(notFoundSchema, "User not found."),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundResponseSchema,
+      "User not found."
+    ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(IdUUIDParamsSchema),
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },

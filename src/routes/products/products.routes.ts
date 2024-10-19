@@ -1,11 +1,14 @@
-import { createRoute, z } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import jsonContent from "stoker/openapi/helpers/json-content";
 import jsonContentOneOf from "stoker/openapi/helpers/json-content-one-of";
 import jsonContentRequired from "stoker/openapi/helpers/json-content-required";
 import { createErrorSchema, IdUUIDParamsSchema } from "stoker/openapi/schemas";
 
-import { notFoundResponseSchema, unauthorizedSchema } from "@/lib/constants";
+import {
+  notFoundResponseSchema,
+  unauthorizedResponseSchema,
+} from "@/lib/constants";
 import createResponseSchema, {
   createPaginatedResponseSchema,
 } from "@/lib/schemas/create-response-schema";
@@ -28,7 +31,7 @@ export const list = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createPaginatedResponseSchema(z.array(selectProductSchema)),
+      createPaginatedResponseSchema(selectProductSchema),
       "The list of products."
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -56,7 +59,7 @@ export const create = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -111,7 +114,7 @@ export const update = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -127,7 +130,7 @@ export const remove = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createResponseSchema(z.object({})),
+      createResponseSchema(),
       "Product deleted."
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(

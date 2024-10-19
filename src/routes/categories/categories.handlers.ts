@@ -12,7 +12,7 @@ import type {
 
 import { db } from "@/db";
 import { categories } from "@/db/schema";
-import { notFoundMessage } from "@/lib/constants";
+import { notFoundResponseMessage, successResponseMessage } from "@/lib/constants";
 
 export const list: AppRouteHandler<CategoryListRoute> = async (c) => {
   const query = c.req.valid("query");
@@ -43,7 +43,8 @@ export const list: AppRouteHandler<CategoryListRoute> = async (c) => {
       message: "Categories retrieved successful.",
       data: result,
       page,
-      pages: Math.ceil(totalCount.count / pageSize),
+      limit: pageSize,
+      totalPage: Math.ceil(totalCount.count / pageSize),
     },
     HttpStatusCodes.OK
   );
@@ -83,13 +84,7 @@ export const getById: AppRouteHandler<CategoryByIdRoute> = async (c) => {
   });
 
   if (!category) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -113,13 +108,7 @@ export const update: AppRouteHandler<CategoryUpdateRoute> = async (c) => {
     .returning();
 
   if (!category) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -138,20 +127,11 @@ export const remove: AppRouteHandler<CategoryRemoveRoute> = async (c) => {
   const result = await db.delete(categories).where(eq(categories.id, id));
 
   if (result.rowCount === 0) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
-    {
-      success: true,
-      message: "Delete category success.",
-    },
+    successResponseMessage("Delete category success."),
     HttpStatusCodes.OK
   );
 };

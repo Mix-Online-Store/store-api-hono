@@ -5,7 +5,7 @@ import type { AppRouteHandler } from "@/lib/types";
 
 import { db } from "@/db";
 import { addresses } from "@/db/schema";
-import { notFoundMessage } from "@/lib/constants";
+import { notFoundResponseMessage } from "@/lib/constants";
 
 import type {
   AddressByIdRoute,
@@ -41,7 +41,8 @@ export const list: AppRouteHandler<AddressListRoute> = async (c) => {
       message: "Addresses retrieved successful.",
       data: result,
       page,
-      pages: Math.ceil(totalCount.count / pageSize),
+      limit: pageSize,
+      totalPage: Math.ceil(totalCount.count / pageSize),
     },
     HttpStatusCodes.OK
   );
@@ -80,13 +81,7 @@ export const getById: AppRouteHandler<AddressByIdRoute> = async (c) => {
   });
 
   if (!address) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -110,13 +105,7 @@ export const update: AppRouteHandler<AddressUpdateRoute> = async (c) => {
     .returning();
 
   if (!address) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -135,13 +124,7 @@ export const remove: AppRouteHandler<AddressRemoveRoute> = async (c) => {
   const result = await db.delete(addresses).where(eq(addresses.id, id));
 
   if (result.rowCount === 0) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(

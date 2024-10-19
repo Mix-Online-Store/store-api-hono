@@ -2,11 +2,10 @@ import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import jsonContent from "stoker/openapi/helpers/json-content";
 import jsonContentRequired from "stoker/openapi/helpers/json-content-required";
-import {
-  createErrorSchema,
-  createMessageObjectSchema,
-} from "stoker/openapi/schemas";
+import { createErrorSchema } from "stoker/openapi/schemas";
 
+import { notFoundResponseSchema } from "@/lib/constants";
+import createResponseSchema from "@/lib/schemas/create-response-schema";
 import {
   authResponseSchema,
   forgotPasswordSchema,
@@ -29,7 +28,8 @@ export const register = createRoute({
   },
   responses: {
     [HttpStatusCodes.CREATED]: jsonContent(
-      createMessageObjectSchema(
+      createResponseSchema(
+        null,
         "Success! Please check your email to verify account."
       ),
       "The registered user."
@@ -50,7 +50,7 @@ export const verifyEmail = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createMessageObjectSchema("Email verified."),
+      createResponseSchema(null, "Email verified."),
       "The email verified success"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -58,11 +58,11 @@ export const verifyEmail = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      createMessageObjectSchema("Unauthorized"),
+      createResponseSchema(null, "Unauthorized"),
       "Unauthorized request"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Not found"),
+      notFoundResponseSchema,
       "User not found"
     ),
   },
@@ -77,7 +77,7 @@ export const login = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      authResponseSchema,
+      createResponseSchema(authResponseSchema),
       "The user login success."
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -85,7 +85,7 @@ export const login = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      createMessageObjectSchema("Unauthorized"),
+      createResponseSchema(null, "Unauthorized"),
       "Unauthorized request"
     ),
   },
@@ -98,11 +98,11 @@ export const logout = createRoute({
   middleware: jwtAuth,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createMessageObjectSchema("User logout success"),
+      createResponseSchema(null, "User logout success"),
       "The user login success."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      createMessageObjectSchema("Unable to logout"),
+      createResponseSchema(null, "Unable to logout"),
       "Unauthorized request"
     ),
   },
@@ -117,7 +117,7 @@ export const forgotPassword = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createMessageObjectSchema("Forgot password request success."),
+      createResponseSchema(null, "Forgot password request success."),
       "The request success"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -125,7 +125,7 @@ export const forgotPassword = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Unable to request forgot password."),
+      notFoundResponseSchema,
       "The user not found"
     ),
   },
@@ -140,7 +140,7 @@ export const resetPassword = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createMessageObjectSchema("Reset password request success."),
+      createResponseSchema(null, "Reset password request success."),
       "The reset password request success"
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -148,11 +148,11 @@ export const resetPassword = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Unable to reset password."),
+      notFoundResponseSchema,
       "The user not found"
     ),
     [HttpStatusCodes.BAD_REQUEST]: jsonContent(
-      createMessageObjectSchema("Unable to reset password."),
+      createResponseSchema(null, "Unable to reset password."),
       "Bad request"
     ),
   },

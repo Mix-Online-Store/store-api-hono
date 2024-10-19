@@ -5,7 +5,7 @@ import type { AppRouteHandler } from "@/lib/types";
 
 import { db } from "@/db";
 import { orderItems, orders, orderTotals } from "@/db/schema";
-import { notFoundMessage } from "@/lib/constants";
+import { notFoundResponseMessage } from "@/lib/constants";
 
 import type {
   OrderByIdRoute,
@@ -48,7 +48,8 @@ export const list: AppRouteHandler<OrderListRoute> = async (c) => {
       message: "Orders retrieved successful.",
       data: result,
       page,
-      pages: Math.ceil(totalCount.count / pageSize),
+      limit: pageSize,
+      totalPage: Math.ceil(totalCount.count / pageSize),
     },
     HttpStatusCodes.OK
   );
@@ -111,13 +112,7 @@ export const getById: AppRouteHandler<OrderByIdRoute> = async (c) => {
   });
 
   if (!order) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -141,13 +136,7 @@ export const update: AppRouteHandler<OrderUpdateRoute> = async (c) => {
     .returning();
 
   if (!order) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -166,13 +155,7 @@ export const remove: AppRouteHandler<OrderRemoveRoute> = async (c) => {
   const result = await db.delete(orders).where(eq(orders.id, id));
 
   if (result.rowCount === 0) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(

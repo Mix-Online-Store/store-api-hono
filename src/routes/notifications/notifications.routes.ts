@@ -4,7 +4,10 @@ import jsonContent from "stoker/openapi/helpers/json-content";
 import jsonContentRequired from "stoker/openapi/helpers/json-content-required";
 import { createErrorSchema, IdUUIDParamsSchema } from "stoker/openapi/schemas";
 
-import { notFoundResponseSchema, unauthorizedSchema } from "@/lib/constants";
+import {
+  notFoundResponseSchema,
+  unauthorizedResponseSchema,
+} from "@/lib/constants";
 import createResponseSchema from "@/lib/schemas/create-response-schema";
 import {
   insertNotificationSchema,
@@ -28,11 +31,11 @@ export const sendNotification = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createResponseSchema(z.object({})),
+      createResponseSchema(),
       "The sent notification."
     ),
     [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
-      createResponseSchema(z.object({})),
+      createResponseSchema(),
       "Internal server occur."
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
@@ -40,7 +43,7 @@ export const sendNotification = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -85,7 +88,7 @@ export const allNotification = createRoute({
     ),
   },
   [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-    unauthorizedSchema,
+    unauthorizedResponseSchema,
     "Unauthorized request."
   ),
 });
@@ -100,7 +103,7 @@ export const deleteNotification = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createResponseSchema(z.object({})),
+      createResponseSchema(),
       "The notification is deleted successfully."
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -112,7 +115,7 @@ export const deleteNotification = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },

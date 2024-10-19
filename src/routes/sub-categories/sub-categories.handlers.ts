@@ -5,7 +5,7 @@ import type { AppRouteHandler } from "@/lib/types";
 
 import { db } from "@/db";
 import { subCategories } from "@/db/schema";
-import { notFoundMessage } from "@/lib/constants";
+import { notFoundResponseMessage } from "@/lib/constants";
 
 import type {
   SubCategoryByIdRoute,
@@ -78,13 +78,7 @@ export const getById: AppRouteHandler<SubCategoryByIdRoute> = async (c) => {
   });
 
   if (!subcategory) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -108,13 +102,7 @@ export const update: AppRouteHandler<SubCategoryUpdateRoute> = async (c) => {
     .returning();
 
   if (!subcategory) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(
@@ -133,13 +121,7 @@ export const remove: AppRouteHandler<SubCategoryRemoveRoute> = async (c) => {
   const result = await db.delete(subCategories).where(eq(subCategories.id, id));
 
   if (result.rowCount === 0) {
-    return c.json(
-      {
-        success: false,
-        message: notFoundMessage.message,
-      },
-      HttpStatusCodes.NOT_FOUND
-    );
+    return c.json(notFoundResponseMessage, HttpStatusCodes.NOT_FOUND);
   }
 
   return c.json(

@@ -5,7 +5,10 @@ import jsonContentOneOf from "stoker/openapi/helpers/json-content-one-of";
 import jsonContentRequired from "stoker/openapi/helpers/json-content-required";
 import { createErrorSchema, IdUUIDParamsSchema } from "stoker/openapi/schemas";
 
-import { notFoundResponseSchema, unauthorizedSchema } from "@/lib/constants";
+import {
+  notFoundResponseSchema,
+  unauthorizedResponseSchema,
+} from "@/lib/constants";
 import { CategoryIdParamsSchema } from "@/lib/schemas/categories";
 import createResponseSchema, {
   createPaginatedResponseSchema,
@@ -33,11 +36,11 @@ export const list = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createPaginatedResponseSchema(z.array(selectCouponCodeSchema)),
+      createPaginatedResponseSchema(selectCouponCodeSchema),
       "The list of cupon codes."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -64,7 +67,7 @@ export const create = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -92,7 +95,7 @@ export const getById = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -127,7 +130,7 @@ export const update = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
@@ -143,7 +146,7 @@ export const remove = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      createResponseSchema(z.object({})),
+      createResponseSchema(),
       "Cupon code deleted."
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -155,7 +158,7 @@ export const remove = createRoute({
       "The validation error(s)."
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
-      unauthorizedSchema,
+      unauthorizedResponseSchema,
       "Unauthorized request."
     ),
   },
