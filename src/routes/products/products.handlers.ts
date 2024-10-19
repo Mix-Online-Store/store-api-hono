@@ -62,7 +62,8 @@ export const list: AppRouteHandler<ProductListRoute> = async (c) => {
       message: "Products retrieved successful.",
       data: result,
       page,
-      pages: Math.ceil(totalCount.count / pageSize),
+      limit: pageSize,
+      totalPage: Math.ceil(totalCount.count / pageSize),
     },
     HttpStatusCodes.OK
   );

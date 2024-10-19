@@ -44,7 +44,8 @@ export const list: AppRouteHandler<SubCategoryListRoute> = async (c) => {
       message: "Sub-categories retrieved successful.",
       data: result,
       page,
-      pages: Math.ceil(totalCount.count / pageSize),
+      limit: pageSize,
+      totalPage: Math.ceil(totalCount.count / pageSize),
     },
     HttpStatusCodes.OK
   );
