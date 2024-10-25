@@ -1,4 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { cors } from "hono/cors";
 import { notFound, onError, serveEmojiFavicon } from "stoker/middlewares";
 import { defaultHook } from "stoker/openapi";
 
@@ -14,6 +15,7 @@ export default function createApp() {
   const app = createRouter();
   app.use(serveEmojiFavicon("🎁"));
   app.use(pinoLogger());
+  app.use(cors());
 
   app.notFound(notFound);
   app.onError(onError);

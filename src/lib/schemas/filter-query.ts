@@ -7,7 +7,7 @@ export const FilterQuerySchema = z.object({
   page: z.coerce.number().optional().openapi({
     example: 1,
   }),
-  pageSize: z.coerce.number().optional().openapi({
+  limit: z.coerce.number().optional().openapi({
     example: 20,
   }),
 });

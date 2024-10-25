@@ -20,7 +20,7 @@ export const list: AppRouteHandler<AddressListRoute> = async (c) => {
   const query = c.req.valid("query");
 
   const page = query.page || 1;
-  const pageSize = query.pageSize || 20;
+  const pageSize = query.limit || 20;
   const skip = pageSize * (page - 1);
 
   const [totalCount] = await db.select({ count: count() }).from(addresses);
