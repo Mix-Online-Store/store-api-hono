@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "start": "node ./dist/src/index.js",
+    "start": "node dist/src/index.js",
     "build": "tsc && tsc-alias",
     "vercel:dev": "bun run build && vercel dev",
     "typecheck": "tsc --noEmit",
